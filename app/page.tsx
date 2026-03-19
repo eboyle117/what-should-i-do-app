@@ -1,14 +1,16 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [result, setResult] = useState("Pick a mood ✨");
   const [time, setTime] = useState("quick");
   const [favorites, setFavorites] = useState<string[]>([]);
+  const router = useRouter();
 
   const suggestions: { [key: string]: { quick: string[]; long: string[] } } = {
     chill: {
-      quick: ["Listen to 3 songs", "Watch a short video", "Sit outside"],
+      quick: ["Listen to music 🎵", "Watch a short video", "Sit outside"],
       long: ["Watch a movie", "Go for a long walk", "Read a book"],
     },
     social: {
@@ -30,6 +32,7 @@ export default function Home() {
     const list = moodData[time as "quick" | "long"];
     const random = list[Math.floor(Math.random() * list.length)];
     setResult(random);
+    router.push(`/results?activity=${encodeURIComponent(random)}`);
   };
 
   const surpriseMe = () => {
@@ -39,9 +42,13 @@ export default function Home() {
   };
 
   const saveFavorite = () => {
-    if (result && !favorites.includes(result)) {
-      setFavorites([...favorites, result]);
-    }
+  const stored = localStorage.getItem("favorites");
+  const current = stored ? JSON.parse(stored) : [];
+
+  if (!current.includes(result)) {
+    const updated = [...current, result];
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  }
   };
 
   const removeFavorite = (item: string) => {
@@ -69,7 +76,12 @@ export default function Home() {
           >
             ⚡ Quick
           </button>
-
+          <button
+          onClick={() => router.push("/favorites")}
+          className="mt-2 text-sm underline text-gray-800 hover:text-black transition"
+          >
+          View Favorites →
+          </button>
           <button
             onClick={() => setTime("long")}
             className={`px-3 py-1 rounded-full transition ${
