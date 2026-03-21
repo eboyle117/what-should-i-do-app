@@ -1,12 +1,12 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ResultsPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const result = searchParams.get("activity") || "";
+  const searchParams = useSearchParams();
+  const result = searchParams.get("activity") || "Pick a mood ✨";
 
   const [favorites, setFavorites] = useState<string[]>([]);
 
@@ -27,6 +27,7 @@ export default function ResultsPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 to-pink-200 p-4">
       <div className="bg-white/50 backdrop-blur-lg p-8 rounded-3xl shadow-xl text-center w-full max-w-md flex flex-col gap-4">
+
         <button
           onClick={() => router.push("/")}
           className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition self-start mb-4"
