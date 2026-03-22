@@ -138,12 +138,6 @@ export default function Home() {
         </div>
 
         {/* Save Button */}
-        <button
-          onClick={saveFavorite}
-          className="px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition"
-        >
-          ❤️ Save this
-        </button>
 
         {/* Favorites List */}
         {favorites.length > 0 && (

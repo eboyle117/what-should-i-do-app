@@ -41,18 +41,19 @@ export default function ResultsContent() {
         <div className="flex flex-col items-center gap-2">
           <p className="text-xl text-gray-900">{result}</p>
 
-          {result.toLowerCase().includes("music") && (
-        <div className="flex flex-col items-center gap-1">
-        <p className="text-xl text-gray-900">Listen to music 🎵</p>
+         <div className="flex flex-col items-center gap-2">
+         <p className="text-xl text-gray-900">{result}</p>
+
+        {result.toLowerCase().includes("music") && (
         <a
         href="https://open.spotify.com"
         target="_blank"
-        className="text-green-600 underline text-sm hover:text-green-700 transition cursor-pointer"
+        className="text-green-600 underline text-sm hover:text-green-700 transition"
         >
-         Open Spotify
+        Open Spotify
         </a>
+     )}
         </div>
-        )}
 
         <button
           onClick={saveFavorite}
