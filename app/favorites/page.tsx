@@ -24,7 +24,7 @@ export default function FavoritesPage() {
         {/* Back button */}
         <button
         onClick={() => router.push("/")}
-        className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition self-start mb-4"
+        className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition self-start mb-4 cursor-pointer"
         >
         ← Back
         </button>
@@ -44,7 +44,7 @@ export default function FavoritesPage() {
                 <span className="text-gray-900">{item}</span>
                 <button
                   onClick={() => removeFavorite(item)}
-                  className="text-red-500"
+                  className="text-red-500 hover:text-red-700 transition cursor-pointer"
                 >
                   ✕
                 </button>

@@ -68,7 +68,7 @@ export default function Home() {
         <div className="flex gap-3">
           <button
             onClick={() => setTime("quick")}
-            className={`px-3 py-1 rounded-full transition ${
+            className={`px-3 py-1 rounded-full transition cursor-pointer ${
               time === "quick"
                 ? "bg-black text-white"
                 : "bg-gray-300 text-gray-800 hover:bg-gray-400"
@@ -78,13 +78,13 @@ export default function Home() {
           </button>
           <button
           onClick={() => router.push("/favorites")}
-          className="mt-2 text-sm underline text-gray-800 hover:text-black transition"
+          className="mt-2 text-sm underline text-gray-800 hover:text-black transition cursor-pointer"
           >
           View Favorites →
           </button>
           <button
             onClick={() => setTime("long")}
-            className={`px-3 py-1 rounded-full transition ${
+            className={`px-3 py-1 rounded-full transition cursor-pointer ${
               time === "long"
                 ? "bg-black text-white"
                 : "bg-gray-300 text-gray-800 hover:bg-gray-400"
@@ -98,35 +98,35 @@ export default function Home() {
         <div className="flex flex-wrap gap-3 justify-center">
           <button
             onClick={() => getSuggestion("chill")}
-            className="px-4 py-2 bg-purple-500 text-white rounded-xl shadow hover:scale-105 hover:bg-purple-600 transition"
+            className="px-4 py-2 bg-purple-500 text-white rounded-xl shadow hover:scale-105 hover:bg-purple-600 transition cursor-pointer"
           >
             😌 Chill
           </button>
 
           <button
             onClick={() => getSuggestion("social")}
-            className="px-4 py-2 bg-pink-500 text-white rounded-xl shadow hover:scale-105 hover:bg-pink-600 transition"
+            className="px-4 py-2 bg-pink-500 text-white rounded-xl shadow hover:scale-105 hover:bg-pink-600 transition cursor-pointer"
           >
             🎉 Social
           </button>
 
           <button
             onClick={() => getSuggestion("productive")}
-            className="px-4 py-2 bg-blue-500 text-white rounded-xl shadow hover:scale-105 hover:bg-blue-600 transition"
+            className="px-4 py-2 bg-blue-500 text-white rounded-xl shadow hover:scale-105 hover:bg-blue-600 transition cursor-pointer"
           >
             💪 Productive
           </button>
 
           <button
             onClick={() => getSuggestion("selfcare")}
-            className="px-4 py-2 bg-green-500 text-white rounded-xl shadow hover:scale-105 hover:bg-green-600 transition"
+            className="px-4 py-2 bg-green-500 text-white rounded-xl shadow hover:scale-105 hover:bg-green-600 transition cursor-pointer"
           >
             🌿 Self-Care
           </button>
 
           <button
             onClick={surpriseMe}
-            className="px-4 py-2 bg-yellow-400 text-black rounded-xl shadow hover:scale-105 hover:bg-yellow-500 transition"
+            className="px-4 py-2 bg-yellow-400 text-black rounded-xl shadow hover:scale-105 hover:bg-yellow-500 transition cursor-pointer"
           >
             🎲 Surprise Me
           </button>
@@ -160,7 +160,7 @@ export default function Home() {
                   <span>{item}</span>
                   <button
                     onClick={() => removeFavorite(item)}
-                    className="text-red-500"
+                    className="text-red-500 cursor-pointer hover:text-red-700 transition"
                   >
                     ✕
                   </button>

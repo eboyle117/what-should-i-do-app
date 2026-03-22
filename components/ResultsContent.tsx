@@ -31,37 +31,39 @@ export default function ResultsContent() {
 
         <button
           onClick={() => router.push("/")}
-          className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition self-start mb-4"
+          className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition self-start mb-4 cursor-pointer"
         >
           ← Back
         </button>
-
+        </div>
         <h1 className="text-3xl font-bold text-gray-800">Your Activity 🎯</h1>
 
         <div className="flex flex-col items-center gap-2">
           <p className="text-xl text-gray-900">{result}</p>
 
           {result.toLowerCase().includes("music") && (
-            <a
-              href="https://open.spotify.com"
-              target="_blank"
-              className="text-green-600 underline"
-            >
-              🎵 Listen to Music
-            </a>
-          )}
+        <div className="flex flex-col items-center gap-1">
+        <p className="text-xl text-gray-900">Listen to music 🎵</p>
+        <a
+        href="https://open.spotify.com"
+        target="_blank"
+        className="text-green-600 underline text-sm hover:text-green-700 transition cursor-pointer"
+        >
+         Open Spotify
+        </a>
         </div>
+        )}
 
         <button
           onClick={saveFavorite}
-          className="px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition"
+          className="px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition cursor-pointer"
         >
           ❤️ Save this
         </button>
 
         <button
           onClick={() => router.push("/favorites")}
-          className="text-sm underline text-gray-800 hover:text-black"
+          className="text-sm underline text-gray-800 hover:text-black cursor-pointer"
         >
           View Favorites →
         </button>
