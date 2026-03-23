@@ -95,14 +95,16 @@ const surpriseMe = () => {
         >
         Long
         </button>
-        <button
-        onClick={() => router.push("/favorites")}
-        className="mt-6 text-sm underline text-gray-800 hover:text-black cursor-pointer"
-        >
-        View Favorites →
-        </button>
+        
       </div>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+      {/* 👇 MOVE FAVORITES HERE */}
+      <button
+      onClick={() => router.push("/favorites")}
+      className="text-sm underline text-gray-800 hover:text-black cursor-pointer"
+      >
+      View Favorites →
+      </button>
+        <h2 className="text-xl font-semibold text-gray-800 mt-4 mb-4 text-center">
         Pick a mood 💭
         </h2>
         {/* Mood Buttons */}
