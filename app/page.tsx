@@ -36,12 +36,6 @@ export default function Home() {
     router.push(`/results?activity=${encodeURIComponent(random)}`);
   };
 
-  const surpriseMe = () => {
-    const moods = Object.keys(suggestions);
-    const randomMood = moods[Math.floor(Math.random() * moods.length)];
-    getSuggestion(randomMood);
-  };
-
   const saveFavorite = () => {
   const stored = localStorage.getItem("favorites");
   const current = stored ? JSON.parse(stored) : [];
@@ -60,6 +54,15 @@ export default function Home() {
   localStorage.setItem("duration", type);
   };
 
+  const handleMoodClick = (mood: string) => {
+  router.push(`/results?mood=${mood}&duration=${duration}`);
+};
+
+const surpriseMe = () => {
+  const moods = ["chill", "social", "productive", "selfcare"];
+  const randomMood = moods[Math.floor(Math.random() * moods.length)];
+  handleMoodClick(randomMood);
+};
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-200 to-yellow-100 p-4">
       
@@ -72,63 +75,75 @@ export default function Home() {
         {/* Time Selector */}
         <div className="flex gap-4">
         <button
-          onClick={() => handleSelect("quick")}
-          className={`px-4 py-2 rounded-xl ${
-            duration === "quick" ? "bg-black text-white" : "bg-gray-200"
-          } cursor-pointer`}
+        onClick={() => handleSelect("quick")}
+        className={`px-4 py-2 rounded-xl cursor-pointer transition ${
+        duration === "quick"
+        ? "bg-black text-white"
+        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+        }`}
         >
-          Quick
+       Quick
         </button>
 
         <button
-          onClick={() => handleSelect("long")}
-          className={`px-4 py-2 rounded-xl ${
-            duration === "long" ? "bg-black text-white" : "bg-gray-200"
-          } cursor-pointer`}
+        onClick={() => handleSelect("long")}
+        className={`px-4 py-2 rounded-xl cursor-pointer transition ${
+        duration === "long"
+        ? "bg-black text-white"
+        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+      }`}
         >
-          Long
+        Long
+        </button>
+        <button
+        onClick={() => router.push("/favorites")}
+        className="mt-6 text-sm underline text-gray-800 hover:text-black cursor-pointer"
+        >
+        View Favorites →
         </button>
       </div>
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Pick a mood 💭
         </h2>
         {/* Mood Buttons */}
-        <div className="flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={() => getSuggestion("chill")}
-            className="px-4 py-2 bg-purple-500 text-white rounded-xl shadow hover:scale-105 hover:bg-purple-600 transition cursor-pointer"
-          >
-            😌 Chill
-          </button>
+<div className="flex flex-wrap gap-3 justify-center">
 
-          <button
-            onClick={() => getSuggestion("social")}
-            className="px-4 py-2 bg-pink-500 text-white rounded-xl shadow hover:scale-105 hover:bg-pink-600 transition cursor-pointer"
-          >
-            🎉 Social
-          </button>
+  <button
+    onClick={() => handleMoodClick("chill")}
+    className="px-4 py-2 bg-purple-500 text-white rounded-xl shadow hover:scale-105 hover:bg-purple-600 transition cursor-pointer"
+  >
+    😌 Chill
+  </button>
 
-          <button
-            onClick={() => getSuggestion("productive")}
-            className="px-4 py-2 bg-blue-500 text-white rounded-xl shadow hover:scale-105 hover:bg-blue-600 transition cursor-pointer"
-          >
-            💪 Productive
-          </button>
+  <button
+    onClick={() => handleMoodClick("social")}
+    className="px-4 py-2 bg-pink-500 text-white rounded-xl shadow hover:scale-105 hover:bg-pink-600 transition cursor-pointer"
+  >
+    🎉 Social
+  </button>
 
-          <button
-            onClick={() => getSuggestion("selfcare")}
-            className="px-4 py-2 bg-green-500 text-white rounded-xl shadow hover:scale-105 hover:bg-green-600 transition cursor-pointer"
-          >
-            🌿 Self-Care
-          </button>
+  <button
+    onClick={() => handleMoodClick("productive")}
+    className="px-4 py-2 bg-blue-500 text-white rounded-xl shadow hover:scale-105 hover:bg-blue-600 transition cursor-pointer"
+  >
+    💪 Productive
+  </button>
 
-          <button
-            onClick={surpriseMe}
-            className="px-4 py-2 bg-yellow-400 text-black rounded-xl shadow hover:scale-105 hover:bg-yellow-500 transition cursor-pointer"
-          >
-            🎲 Surprise Me
-          </button>
-        </div>
+  <button
+    onClick={() => handleMoodClick("selfcare")}
+    className="px-4 py-2 bg-green-500 text-white rounded-xl shadow hover:scale-105 hover:bg-green-600 transition cursor-pointer"
+  >
+    🌿 Self-Care
+  </button>
+
+  <button
+    onClick={surpriseMe}
+    className="px-4 py-2 bg-yellow-400 text-black rounded-xl shadow hover:scale-105 hover:bg-yellow-500 transition cursor-pointer"
+  >
+    🎲 Surprise Me
+  </button>
+
+</div>
 
         
 
