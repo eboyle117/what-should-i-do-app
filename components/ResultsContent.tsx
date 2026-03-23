@@ -21,9 +21,16 @@ export default function ResultsContent() {
 
   const moodList = suggestions[mood as keyof typeof suggestions];
 
-  const result =
-    moodList?.[Math.floor(Math.random() * moodList.length)] ||
-    "Pick a mood ✨";
+  const [result, setResult] = useState<string>("");
+
+    useEffect(() => {
+    if (!moodList) return;
+
+    const random =
+    moodList[Math.floor(Math.random() * moodList.length)];
+
+    setResult(random);
+    }, [mood]);
 
   // ✅ state MUST be inside component
   const [favorites, setFavorites] = useState<string[]>([]);

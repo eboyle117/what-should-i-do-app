@@ -1,13 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [duration, setDuration] = useState<string>("quick");
-  const [result, setResult] = useState("Pick a mood ✨");
-  const [time, setTime] = useState("quick");
-  const [favorites, setFavorites] = useState<string[]>([]);
+  useEffect(() => {
+    const saved = localStorage.getItem("duration");
+
+    if (saved === "quick" || saved === "long") {
+      setDuration(saved);
+    }
+  }, []);
   const router = useRouter();
+  const [result, setResult] = useState("Pick a mood ✨");
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const suggestions: { [key: string]: { quick: string[]; long: string[] } } = {
     chill: {
