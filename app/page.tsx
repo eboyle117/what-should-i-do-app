@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const [duration, setDuration] = useState<string>("quick");
   const [result, setResult] = useState("Pick a mood ✨");
   const [time, setTime] = useState("quick");
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -54,6 +55,10 @@ export default function Home() {
   const removeFavorite = (item: string) => {
     setFavorites(favorites.filter((fav) => fav !== item));
   };
+  const handleSelect = (type: string) => {
+  setDuration(type);
+  localStorage.setItem("duration", type);
+  };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-200 to-yellow-100 p-4">
@@ -65,35 +70,28 @@ export default function Home() {
         </h1>
 
         {/* Time Selector */}
-        <div className="flex gap-3">
-          <button
-            onClick={() => setTime("quick")}
-            className={`px-3 py-1 rounded-full transition cursor-pointer ${
-              time === "quick"
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            ⚡ Quick
-          </button>
-          <button
-          onClick={() => router.push("/favorites")}
-          className="mt-2 text-sm underline text-gray-800 hover:text-black transition cursor-pointer"
-          >
-          View Favorites →
-          </button>
-          <button
-            onClick={() => setTime("long")}
-            className={`px-3 py-1 rounded-full transition cursor-pointer ${
-              time === "long"
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            🕒 Long
-          </button>
-        </div>
+        <div className="flex gap-4">
+        <button
+          onClick={() => handleSelect("quick")}
+          className={`px-4 py-2 rounded-xl ${
+            duration === "quick" ? "bg-black text-white" : "bg-gray-200"
+          } cursor-pointer`}
+        >
+          Quick
+        </button>
 
+        <button
+          onClick={() => handleSelect("long")}
+          className={`px-4 py-2 rounded-xl ${
+            duration === "long" ? "bg-black text-white" : "bg-gray-200"
+          } cursor-pointer`}
+        >
+          Long
+        </button>
+      </div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        Pick a mood 💭
+        </h2>
         {/* Mood Buttons */}
         <div className="flex flex-wrap gap-3 justify-center">
           <button
@@ -132,10 +130,7 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Result */}
-        <div className="text-xl font-semibold text-gray-800 text-center">
-          {result}
-        </div>
+        
 
         {/* Save Button */}
 

@@ -1,7 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const [saved, setSaved] = useState(false);
+import { useRouter, useSearchParams } from "next/navigation";
+
 
 export default function ResultsContent() {
   const router = useRouter();
@@ -16,14 +19,15 @@ export default function ResultsContent() {
   }, []);
 
   const saveFavorite = () => {
-    if (!result || result === "Pick a mood ✨") return;
+  const existing = JSON.parse(localStorage.getItem("favorites") || "[]");
+  localStorage.setItem("favorites", JSON.stringify([...existing, result]));
+  
+  setSaved(true);
 
-    if (!favorites.includes(result)) {
-      const updated = [...favorites, result];
-      setFavorites(updated);
-      localStorage.setItem("favorites", JSON.stringify(updated));
-    }
-  };
+  setTimeout(() => {
+    setSaved(false);
+  }, 2000);
+};
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 to-pink-200 p-4">
