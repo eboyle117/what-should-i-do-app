@@ -34,13 +34,7 @@ export default function Home() {
     },
   };
 
-  const getSuggestion = (mood: string) => {
-    const moodData = suggestions[mood];
-    const list = moodData[time as "quick" | "long"];
-    const random = list[Math.floor(Math.random() * list.length)];
-    setResult(random);
-    router.push(`/results?activity=${encodeURIComponent(random)}`);
-  };
+  
 
   const saveFavorite = () => {
   const stored = localStorage.getItem("favorites");
