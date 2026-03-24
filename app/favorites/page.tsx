@@ -1,22 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function FavoritesPage() {
-    const router = useRouter();
-    const [favorites, setFavorites] = useState<string[]>([]);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("favorites");
-    if (stored) setFavorites(JSON.parse(stored));
-  }, []);
-
-  const removeFavorite = (item: string) => {
-    const updated = favorites.filter((f) => f !== item);
-    setFavorites(updated);
-    localStorage.setItem("favorites", JSON.stringify(updated));
-  };
+  const router = useRouter();
+  const { session } = useAuth();
+  const { favorites, isLoading, removeFavorite } = useFavorites();
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 to-purple-200 p-4">
@@ -32,16 +23,24 @@ export default function FavoritesPage() {
           ❤️ Your Favorites
         </h1>
 
-        {favorites.length === 0 ? (
+        {!session?.user && (
+          <p className="text-sm text-gray-600 mb-3">
+            Sign in with Google to save favorites to your account and access them from any device.
+          </p>
+        )}
+
+        {isLoading ? (
+          <p className="text-gray-700">Loading...</p>
+        ) : favorites.length === 0 ? (
           <p className="text-gray-700">No favorites yet</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {favorites.map((item, i) => (
               <li
                 key={i}
-                className="flex justify-between items-center bg-white/70 p-2 rounded-lg"
+                className="flex justify-between items-center bg-white/70 p-2 rounded-lg text-gray-900"
                 >
-                <span className="text-gray-900">{item}</span>
+                <span>{item}</span>
                 <button
                   onClick={() => removeFavorite(item)}
                   className="text-red-500 hover:text-red-700 transition cursor-pointer"

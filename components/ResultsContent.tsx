@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export default function ResultsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { addFavorite, favorites } = useFavorites();
 
-  // ✅ get mood + duration from URL
   const mood = searchParams.get("mood");
   const duration = searchParams.get("duration");
 
-  // ✅ suggestions
   const suggestions = {
     chill: ["Watch a movie 🍿", "Listen to music 🎵"],
     social: ["Call a friend 📞", "Go out for drinks 🍹"],
@@ -22,36 +22,22 @@ export default function ResultsContent() {
   const moodList = suggestions[mood as keyof typeof suggestions];
 
   const [result, setResult] = useState<string>("");
-
-    useEffect(() => {
-    if (!moodList) return;
-
-    const random =
-    moodList[Math.floor(Math.random() * moodList.length)];
-
-    setResult(random);
-    }, [mood]);
-
-  // ✅ state MUST be inside component
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("favorites");
-    if (stored) setFavorites(JSON.parse(stored));
-  }, []);
+    if (!moodList) return;
+    const random = moodList[Math.floor(Math.random() * moodList.length)];
+    setResult(random);
+  }, [mood]);
 
   const saveFavorite = () => {
     if (!result || result === "Pick a mood ✨") return;
-
-    const existing = JSON.parse(localStorage.getItem("favorites") || "[]");
-
-    if (!existing.includes(result)) {
-      const updated = [...existing, result];
-      localStorage.setItem("favorites", JSON.stringify(updated));
-      setFavorites(updated);
+    if (favorites.includes(result)) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      return;
     }
-
+    addFavorite(result);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };

@@ -1,19 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export default function Home() {
   const [duration, setDuration] = useState<string>("quick");
+  const { favorites, removeFavorite } = useFavorites();
+
   useEffect(() => {
     const saved = localStorage.getItem("duration");
-
     if (saved === "quick" || saved === "long") {
       setDuration(saved);
     }
   }, []);
   const router = useRouter();
-  const [result, setResult] = useState("Pick a mood ✨");
-  const [favorites, setFavorites] = useState<string[]>([]);
 
   const suggestions: { [key: string]: { quick: string[]; long: string[] } } = {
     chill: {
@@ -34,21 +34,6 @@ export default function Home() {
     },
   };
 
-  
-
-  const saveFavorite = () => {
-  const stored = localStorage.getItem("favorites");
-  const current = stored ? JSON.parse(stored) : [];
-
-  if (!current.includes(result)) {
-    const updated = [...current, result];
-    localStorage.setItem("favorites", JSON.stringify(updated));
-  }
-  };
-
-  const removeFavorite = (item: string) => {
-    setFavorites(favorites.filter((fav) => fav !== item));
-  };
   const handleSelect = (type: string) => {
   setDuration(type);
   localStorage.setItem("duration", type);
@@ -161,7 +146,7 @@ const surpriseMe = () => {
               {favorites.map((item, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center bg-white/60 px-3 py-2 rounded-lg"
+                  className="flex justify-between items-center bg-white/60 px-3 py-2 rounded-lg text-gray-900"
                 >
                   <span>{item}</span>
                   <button
