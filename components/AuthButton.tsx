@@ -54,7 +54,7 @@ export function AuthButton() {
         />
       )}
       <span className="hidden text-sm text-gray-700 sm:inline">
-        {session.user.name || session.user.email}
+      {session.user.name || session.user.email}
       </span>
       <button
       onClick={() => signOut({ callbackUrl: "/" })}
