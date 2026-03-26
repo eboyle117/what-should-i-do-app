@@ -57,10 +57,10 @@ export function AuthButton() {
         {session.user.name || session.user.email}
       </span>
       <button
-        onClick={() => signOut({ callbackUrl: "/" })}
-        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+      onClick={() => signOut({ callbackUrl: "/" })}
+      className="flex items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gray-50 transition-all duration-200 ease-in-out cursor-pointer"
       >
-        Sign out
+      Sign out
       </button>
     </div>
   );
