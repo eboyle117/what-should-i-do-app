@@ -53,7 +53,7 @@ export function AuthButton() {
           height={32}
         />
       )}
-      <span className="hidden text-sm text-gray-700 sm:inline">
+      <span className="hidden text-sm text-white sm:inline drop-shadow-sm">
       {session.user.name || session.user.email}
       </span>
       <button
