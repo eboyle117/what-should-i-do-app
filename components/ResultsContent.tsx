@@ -1,10 +1,12 @@
 "use client";
 
+import { useSession, signIn } from 'next-auth/react'
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFavorites } from "@/hooks/useFavorites";
 
 export default function ResultsContent() {
+  const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addFavorite, favorites } = useFavorites();
@@ -31,16 +33,18 @@ export default function ResultsContent() {
   }, [mood]);
 
   const saveFavorite = () => {
-    if (!result || result === "Pick a mood ✨") return;
-    if (favorites.includes(result)) {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-      return;
-    }
-    addFavorite(result);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  if (!session) {
+    signIn("google");
+    return;
+  }
+
+  if (!result || result === "Pick a mood ✨") return;
+
+  addFavorite(result); // ✅ use your hook
+
+  setSaved(true);
+  setTimeout(() => setSaved(false), 2000);
+};
 
   // ✅ fallback if mood missing
   if (!mood) {
