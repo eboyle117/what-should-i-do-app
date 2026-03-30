@@ -1,8 +1,6 @@
-"use client";
-
-import { SessionProvider } from "next-auth/react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Providers from "@/components/Providers";
 import { AuthProvider } from "@/components/AuthProvider";
 import { AuthButton } from "@/components/AuthButton";
 import "./globals.css";
@@ -33,16 +31,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <SessionProvider>
+        <Providers>
           <AuthProvider>
             <header className="flex justify-end p-4">
               <AuthButton />
             </header>
 
             {children}
-            
           </AuthProvider>
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   );
