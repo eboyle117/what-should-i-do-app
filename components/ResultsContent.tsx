@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn } from 'next-auth/react'
+import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -9,44 +9,64 @@ export default function ResultsContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addFavorite, favorites } = useFavorites();
+  const { addFavorite } = useFavorites();
 
   const mood = searchParams.get("mood");
-  const duration = searchParams.get("duration");
-
-  const suggestions = {
-    chill: ["Watch a movie 🍿", "Listen to music 🎵"],
-    social: ["Call a friend 📞", "Go out for drinks 🍹"],
-    productive: ["Clean your room 🧹", "Finish a task ✅"],
-    selfcare: ["Take a bath 🛁", "Do skincare 🧴"]
-  };
-
-  const moodList = suggestions[mood as keyof typeof suggestions];
 
   const [result, setResult] = useState<string>("");
+  const [link, setLink] = useState("");
   const [saved, setSaved] = useState(false);
 
+  // 🎬 MOVIE API
+  const getMovie = async () => {
+    const res = await fetch("/api/movies");
+    const data = await res.json();
+
+    setResult(`🎬 Watch: ${data.title}`);
+    setLink(""); // clear Spotify link
+  };
+
+  // 🎵 MUSIC API
+  const getMusic = async () => {
+    const res = await fetch("/api/music");
+    const data = await res.json();
+
+    setResult("🎵 Listen to music");
+    setLink(data.url);
+  };
+
+  // 🔥 MAIN LOGIC
   useEffect(() => {
-    if (!moodList) return;
-    const random = moodList[Math.floor(Math.random() * moodList.length)];
-    setResult(random);
+    if (!mood) return;
+
+    if (mood === "chill") {
+      getMusic();
+    } else if (mood === "social") {
+      getMovie();
+    } else if (mood === "productive") {
+      setResult("💪 Do something productive!");
+      setLink("");
+    } else if (mood === "selfcare") {
+      setResult("🌿 Take care of yourself!");
+      setLink("");
+    }
   }, [mood]);
 
   const saveFavorite = () => {
-  if (!session) {
-    signIn("google");
-    return;
-  }
+    if (!session) {
+      signIn("google");
+      return;
+    }
 
-  if (!result || result === "Pick a mood ✨") return;
+    if (!result) return;
 
-  addFavorite(result); // ✅ use your hook
+    addFavorite(result);
 
-  setSaved(true);
-  setTimeout(() => setSaved(false), 2000);
-};
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
 
-  // ✅ fallback if mood missing
+  // fallback
   if (!mood) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
@@ -82,10 +102,12 @@ export default function ResultsContent() {
         <div className="flex flex-col items-center gap-2">
           <p className="text-xl text-gray-900">{result}</p>
 
-          {result.toLowerCase().includes("music") && (
+          {/* 🎵 Spotify link */}
+          {link && (
             <a
-              href="https://open.spotify.com"
+              href={link}
               target="_blank"
+              rel="noopener noreferrer"
               className="text-green-600 underline text-sm hover:text-green-700 transition"
             >
               Open Spotify
