@@ -5,11 +5,10 @@ export async function GET() {
 
   const data = await res.json();
 
-  const random =
-    data.results[Math.floor(Math.random() * data.results.length)];
+  const movies = data.results.slice(0, 5).map((movie: any) => ({
+    title: movie.title,
+    poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+  }));
 
-  return Response.json({
-    title: random.title,
-    overview: random.overview,
-  });
+  return Response.json(movies);
 }

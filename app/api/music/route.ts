@@ -19,8 +19,9 @@ async function getSpotifyToken() {
 export async function GET() {
   const token = await getSpotifyToken();
 
+  // 🔥 use a popular playlist (Today’s Top Hits)
   const res = await fetch(
-    "https://api.spotify.com/v1/browse/featured-playlists",
+    "https://api.spotify.com/v1/playlists/37i9dQZF1DXcBWIGoYBM5M",
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -30,13 +31,11 @@ export async function GET() {
 
   const data = await res.json();
 
-  const random =
-    data.playlists.items[
-      Math.floor(Math.random() * data.playlists.items.length)
-    ];
+  const tracks = data.tracks.items.slice(0, 5).map((item: any) => ({
+    name: item.track.name,
+    artist: item.track.artists[0].name,
+    url: item.track.external_urls.spotify,
+  }));
 
-  return Response.json({
-    name: random.name,
-    url: random.external_urls.spotify,
-  });
+  return Response.json(tracks);
 }

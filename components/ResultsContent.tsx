@@ -11,11 +11,13 @@ export default function ResultsContent() {
   const searchParams = useSearchParams();
   const { addFavorite } = useFavorites();
 
+  const [songs, setSongs] = useState<any[]>([]);
+  const [movies, setMovies] = useState<any[]>([]);
+
   const mood = searchParams.get("mood");
   const duration = searchParams.get("duration") || "quick";
 
   const [result, setResult] = useState("");
-  const [link, setLink] = useState("");
   const [saved, setSaved] = useState(false);
 
   // 🎬 MOVIE API
@@ -23,8 +25,10 @@ export default function ResultsContent() {
     try {
       const res = await fetch("/api/movies");
       const data = await res.json();
-      setResult(`🎬 Watch: ${data.title}`);
-      setLink("");
+
+      setResult("🎬 Trending Movies");
+      setMovies(data);
+      setSongs([]);
     } catch {
       fallbackSuggestion();
     }
@@ -35,82 +39,83 @@ export default function ResultsContent() {
     try {
       const res = await fetch("/api/music");
       const data = await res.json();
-      setResult("🎵 Listen to music");
-      setLink(data.url);
+
+      setResult("🎵 Trending Songs");
+      setSongs(data);
+      setMovies([]);
     } catch {
       fallbackSuggestion();
     }
   };
 
-  // 💡 FULL SUGGESTIONS SYSTEM
+  // 💡 suggestions fallback
   const suggestions: any = {
     chill: {
       quick: [
-        "Scroll TikTok for 10 mins 📱",
+        "Scroll TikTok 📱",
         "Listen to music 🎧",
         "Sit outside 🌿",
-        "Watch a short YouTube video ▶️",
-        "Make a cozy drink ☕",
+        "Watch YouTube ▶️",
+        "Make a drink ☕",
       ],
       long: [
         "Watch a movie 🍿",
-        "Go for a long walk 🚶‍♀️",
+        "Go for a walk 🚶‍♀️",
         "Read a book 📖",
-        "Start a new TV show 📺",
-        "Have a solo coffee date ☕",
+        "Start a show 📺",
+        "Coffee date ☕",
       ],
     },
     social: {
       quick: [
         "Text a friend 💬",
-        "Send someone a meme 😂",
-        "Call a friend 📞",
+        "Send a meme 😂",
+        "Call someone 📞",
         "Reply to messages 📲",
-        "Make plans for later 📅",
+        "Make plans 📅",
       ],
       long: [
         "Go out for food 🍔",
-        "Hang out with friends 🎉",
+        "Hang out 🎉",
         "Go to a bar 🍹",
         "Visit someone 🏡",
-        "Go on a spontaneous adventure 🚗",
+        "Adventure 🚗",
       ],
     },
     productive: {
       quick: [
-        "Clean your desk 🧹",
+        "Clean desk 🧹",
         "Reply to emails 📧",
-        "Organize your notes 🗂️",
+        "Organize notes 🗂️",
         "Make a to-do list 📝",
-        "Do a quick workout 💪",
+        "Quick workout 💪",
       ],
       long: [
-        "Deep work session 💻",
-        "Go to the gym 🏋️‍♀️",
-        "Clean your entire room 🧼",
-        "Work on a project 🚀",
-        "Study something new 📚",
+        "Deep work 💻",
+        "Go to gym 🏋️‍♀️",
+        "Clean room 🧼",
+        "Work on project 🚀",
+        "Study 📚",
       ],
     },
     selfcare: {
       quick: [
-        "Do skincare 🧴",
+        "Skincare 🧴",
         "Stretch 🧘‍♀️",
         "Drink water 💧",
-        "Take deep breaths 🌬️",
-        "Step outside for fresh air 🌿",
+        "Breathe 🌬️",
+        "Fresh air 🌿",
       ],
       long: [
-        "Take a long shower 🚿",
-        "Journal your thoughts 📓",
-        "Do a full self-care routine 🛁",
+        "Long shower 🚿",
+        "Journal 📓",
+        "Self-care night 🛁",
         "Meditate 🧘‍♀️",
-        "Have a relaxing night routine 🌙",
+        "Relax 🌙",
       ],
     },
   };
 
-  // fallback suggestion
   const fallbackSuggestion = () => {
     if (!mood) return;
 
@@ -118,15 +123,15 @@ export default function ResultsContent() {
     const random = list[Math.floor(Math.random() * list.length)];
 
     setResult(random);
-    setLink("");
+    setSongs([]);
+    setMovies([]);
   };
 
-  // 🔥 MAIN LOGIC
+  // 🔥 main logic
   useEffect(() => {
     if (!mood) return;
 
-    // randomly decide API vs normal suggestion
-    const useAPI = Math.random() < 0.5;
+    const useAPI = Math.random() < 0.6;
 
     if (mood === "chill" && useAPI) {
       getMusic();
@@ -180,18 +185,44 @@ export default function ResultsContent() {
           Your Activity 🎯
         </h1>
 
-        <div className="flex flex-col items-center gap-2">
+        {/* RESULT + BANNERS */}
+        <div className="flex flex-col items-center gap-4 w-full">
           <p className="text-xl text-gray-900">{result}</p>
 
-          {link && (
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-600 underline text-sm"
-            >
-              Open Spotify
-            </a>
+          {/* 🎵 SONGS */}
+          {songs.length > 0 && (
+            <div className="flex gap-3 overflow-x-auto w-full">
+              {songs.map((song, i) => (
+                <a
+                  key={i}
+                  href={song.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="min-w-[150px] bg-white p-3 rounded-xl shadow hover:scale-105 transition cursor-pointer"
+                >
+                  <p className="font-semibold text-sm">{song.name}</p>
+                  <p className="text-xs text-gray-500">{song.artist}</p>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* 🎬 MOVIES */}
+          {movies.length > 0 && (
+            <div className="flex gap-3 overflow-x-auto w-full">
+              {movies.map((movie, i) => (
+                <div
+                  key={i}
+                  className="min-w-[120px] cursor-pointer hover:scale-105 transition"
+                >
+                  <img
+                    src={movie.poster}
+                    className="rounded-xl"
+                  />
+                  <p className="text-xs mt-1">{movie.title}</p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
