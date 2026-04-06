@@ -4,18 +4,21 @@ import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useRef } from "react";
 
 export default function ResultsContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addFavorite } = useFavorites();
+  const hasRun = useRef(false);
 
   const [songs, setSongs] = useState<any[]>([]);
   const [movies, setMovies] = useState<any[]>([]);
 
   const mood = searchParams.get("mood");
-  const duration = searchParams.get("duration") || "quick";
+  const durationParam = searchParams.get("duration");
+  const duration = durationParam === "long" ? "long" : "quick";
 
   const [result, setResult] = useState("");
   const [saved, setSaved] = useState(false);
@@ -26,11 +29,16 @@ export default function ResultsContent() {
       const res = await fetch("/api/movies");
       const data = await res.json();
 
+      if (!data || data.error) {
+        setResult("Watch a movie 🍿");
+        return;
+      }
+
       setResult("🎬 Trending Movies");
       setMovies(data);
       setSongs([]);
     } catch {
-      fallbackSuggestion();
+      setResult("Watch a movie 🍿");
     }
   };
 
@@ -40,20 +48,25 @@ export default function ResultsContent() {
       const res = await fetch("/api/music");
       const data = await res.json();
 
+      if (!data || data.error) {
+        setResult("Listen to music 🎵");
+        return;
+      }
+
       setResult("🎵 Trending Songs");
       setSongs(data);
       setMovies([]);
     } catch {
-      fallbackSuggestion();
+      setResult("Listen to music 🎵");
     }
   };
 
-  // 💡 suggestions fallback
+  // 💡 suggestions
   const suggestions: any = {
     chill: {
       quick: [
         "Scroll TikTok 📱",
-        "Listen to music 🎧",
+        "Listen to music 🎵",
         "Sit outside 🌿",
         "Watch YouTube ▶️",
         "Make a drink ☕",
@@ -116,31 +129,40 @@ export default function ResultsContent() {
     },
   };
 
-  const fallbackSuggestion = () => {
-    if (!mood) return;
-
-    const list = suggestions[mood][duration];
-    const random = list[Math.floor(Math.random() * list.length)];
-
-    setResult(random);
-    setSongs([]);
-    setMovies([]);
-  };
-
-  // 🔥 main logic
   useEffect(() => {
-    if (!mood) return;
+  if (!mood || hasRun.current) return;
 
-    const useAPI = Math.random() < 0.6;
+  hasRun.current = true;
 
-    if (mood === "chill" && useAPI) {
-      getMusic();
-    } else if (mood === "social" && useAPI) {
-      getMovie();
-    } else {
-      fallbackSuggestion();
-    }
-  }, [mood, duration]);
+  const moodData = suggestions[mood];
+  if (!moodData) {
+    setResult("Pick a mood ✨");
+    return;
+  }
+
+  const list = moodData[duration];
+  if (!list) {
+    setResult("Pick a mood ✨");
+    return;
+  }
+
+  const random = list[Math.floor(Math.random() * list.length)];
+
+  if (random === "Listen to music 🎵") {
+    getMusic();
+    return;
+  }
+
+  if (random === "Watch a movie 🍿") {
+    getMovie();
+    return;
+  }
+
+  setSongs([]);
+  setMovies([]);
+  setResult(random);
+
+}, [mood, duration]);
 
   const saveFavorite = () => {
     if (!session) {
@@ -151,7 +173,6 @@ export default function ResultsContent() {
     if (!result) return;
 
     addFavorite(result);
-
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -185,42 +206,54 @@ export default function ResultsContent() {
           Your Activity 🎯
         </h1>
 
-        {/* RESULT + BANNERS */}
         <div className="flex flex-col items-center gap-4 w-full">
-          <p className="text-xl text-gray-900">{result}</p>
-
-          {/* 🎵 SONGS */}
-          {songs.length > 0 && (
-            <div className="flex gap-3 overflow-x-auto w-full">
-              {songs.map((song, i) => (
-                <a
-                  key={i}
-                  href={song.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="min-w-[150px] bg-white p-3 rounded-xl shadow hover:scale-105 transition cursor-pointer"
-                >
-                  <p className="font-semibold text-sm">{song.name}</p>
-                  <p className="text-xs text-gray-500">{song.artist}</p>
-                </a>
-              ))}
-            </div>
+          {!result ? (
+            <p className="text-gray-400">Finding something for you...</p>
+          ) : (
+            <p className="text-xl text-gray-900">{result}</p>
           )}
 
-          {/* 🎬 MOVIES */}
+          {songs.length > 0 && (
+  <div className="flex gap-2 overflow-x-auto w-full pb-2">
+    {songs.map((song, i) => (
+      <a
+        key={i}
+        href={song.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="min-w-[180px] bg-[#121212] text-white px-3 py-2 rounded-lg shadow-sm hover:bg-[#1a1a1a] hover:scale-[1.02] transition cursor-pointer flex items-center gap-3"
+      >
+        {/* Spotify logo */}
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg"
+          className="w-5 h-5 flex-shrink-0"
+        />
+
+        {/* Text (LEFT ALIGNED) */}
+        <div className="flex flex-col text-left leading-tight overflow-hidden">
+          <p className="text-sm font-medium truncate">
+            {song.name}
+          </p>
+          <p className="text-xs text-gray-400 truncate">
+            {song.artist}
+          </p>
+        </div>
+      </a>
+    ))}
+  </div>
+)}
+
           {movies.length > 0 && (
-            <div className="flex gap-3 overflow-x-auto w-full">
+            <div className="flex gap-3 overflow-x-auto w-full">                                             
               {movies.map((movie, i) => (
-                <div
+                <a
                   key={i}
-                  className="min-w-[120px] cursor-pointer hover:scale-105 transition"
+                  href={`https://www.themoviedb.org/search?query=${encodeURIComponent(movie.title)}`}
+                  target="_blank"
+                  className="min-w-[130px]"
                 >
-                  <img
-                    src={movie.poster}
-                    className="rounded-xl"
-                  />
-                  <p className="text-xs mt-1">{movie.title}</p>
-                </div>
+                  <img src={movie.poster} className="rounded-xl" />
+                </a>
               ))}
             </div>
           )}
