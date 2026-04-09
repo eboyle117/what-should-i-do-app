@@ -8,21 +8,11 @@ export function useFavorites() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchFavorites = useCallback(async () => {
-    if (session?.user) {
-      try {
-        const res = await fetch("/api/favorites");
-        const data = await res.json();
-        setFavorites(data.favorites ?? []);
-      } catch {
-        setFavorites([]);
-      }
-    } else {
-      const stored = localStorage.getItem("favorites");
-      setFavorites(stored ? JSON.parse(stored) : []);
-    }
-    setIsLoading(false);
-  }, [session?.user]);
+  const fetchFavorites = async () => {
+  const res = await fetch("/api/favorites");
+  const data = await res.json();
+  setFavorites(data.favorites); // ✅ important
+};
 
   useEffect(() => {
     setIsLoading(true);

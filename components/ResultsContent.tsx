@@ -164,18 +164,25 @@ export default function ResultsContent() {
 
 }, [mood, duration]);
 
-  const saveFavorite = () => {
-    if (!session) {
-      signIn("google");
-      return;
-    }
+  const saveFavorite = async () => {
+  if (!session) {
+    signIn("google");
+    return;
+  }
 
-    if (!result) return;
+  if (!result) return;
 
-    addFavorite(result);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  await fetch("/api/favorites", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ activity: result }), // ✅ FIXED
+  });
+
+  setSaved(true);
+  setTimeout(() => setSaved(false), 2000);
+};
 
   if (!mood) {
     return (
