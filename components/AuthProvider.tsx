@@ -8,6 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { SessionProvider } from "next-auth/react"; // ✅ ADD THIS
 
 type Session = {
   user?: {
@@ -54,8 +55,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refetch]);
 
   return (
-    <AuthContext.Provider value={{ session, isLoading, refetch }}>
-      {children}
-    </AuthContext.Provider>
+    <SessionProvider> {/* ✅ THIS FIXES EVERYTHING */}
+      <AuthContext.Provider value={{ session, isLoading, refetch }}>
+        {children}
+      </AuthContext.Provider>
+    </SessionProvider>
   );
 }
