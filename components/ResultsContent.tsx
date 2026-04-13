@@ -129,30 +129,29 @@ export default function ResultsContent() {
     },
   };
 
-  useEffect(() => {
+useEffect(() => {
   if (!mood) return;
 
   const run = async () => {
-    // RESET first so no flicker
-    setResult("");
+    const moodData = suggestions[mood as keyof typeof suggestions];
+    if (!moodData) return;
 
-    if (mood === "chill" && duration === "quick") {
+    const list = moodData[duration as "quick" | "long"];
+    const random =
+      list[Math.floor(Math.random() * list.length)];
+
+    // 👉 handle special cases
+    if (random.toLowerCase().includes("music")) {
       await getMusic();
       return;
     }
 
-    if (mood === "chill" && duration === "long") {
+    if (random.toLowerCase().includes("movie")) {
       await getMovie();
       return;
     }
 
-    // normal suggestions
-    const moodList = suggestions[mood as keyof typeof suggestions];
-    if (!moodList) return;
-
-    const random =
-      moodList[Math.floor(Math.random() * moodList.length)];
-
+    // 👉 normal activity
     setResult(random);
   };
 
