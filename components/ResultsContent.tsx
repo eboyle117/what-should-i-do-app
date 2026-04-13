@@ -130,38 +130,33 @@ export default function ResultsContent() {
   };
 
   useEffect(() => {
-  if (!mood || hasRun.current) return;
+  if (!mood) return;
 
-  hasRun.current = true;
+  const run = async () => {
+    // RESET first so no flicker
+    setResult("");
 
-  const moodData = suggestions[mood];
-  if (!moodData) {
-    setResult("Pick a mood ✨");
-    return;
-  }
+    if (mood === "chill" && duration === "quick") {
+      await getMusic();
+      return;
+    }
 
-  const list = moodData[duration];
-  if (!list) {
-    setResult("Pick a mood ✨");
-    return;
-  }
+    if (mood === "chill" && duration === "long") {
+      await getMovie();
+      return;
+    }
 
-  const random = list[Math.floor(Math.random() * list.length)];
+    // normal suggestions
+    const moodList = suggestions[mood as keyof typeof suggestions];
+    if (!moodList) return;
 
-  if (random === "Listen to music 🎵") {
-    getMusic();
-    return;
-  }
+    const random =
+      moodList[Math.floor(Math.random() * moodList.length)];
 
-  if (random === "Watch a movie 🍿") {
-    getMovie();
-    return;
-  }
+    setResult(random);
+  };
 
-  setSongs([]);
-  setMovies([]);
-  setResult(random);
-
+  run();
 }, [mood, duration]);
 
   const saveFavorite = async () => {
@@ -177,7 +172,7 @@ export default function ResultsContent() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ activity: result }), // ✅ FIXED
+    body: JSON.stringify({ activity: result }),
   });
 
   setSaved(true);
