@@ -7,7 +7,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
 
   // ❌ keep this OFF for now (you don’t have DB set up fully yet)
-  //adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma),
 
   providers: [
     Google({
@@ -17,7 +17,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   session: {
-    strategy: "jwt",
+    strategy: "database",
     maxAge: 30 * 24 * 60 * 60,
   },
 
@@ -26,11 +26,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
 
   callbacks: {
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub!;
-      }
-      return session;
-    },
+  async session({ session, user }) {
+    if (session.user) {
+      session.user.id = user.id; // ✅ real DB id
+    }
+    return session;
   },
+},
 });
