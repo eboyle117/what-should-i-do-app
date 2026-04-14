@@ -1,69 +1,52 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/components/AuthProvider";
+import { useEffect, useState } from "react";
 
 export function useFavorites() {
-  const { session, refetch: refetchAuth } = useAuth();
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchFavorites = async () => {
-  const res = await fetch("/api/favorites");
-  const data = await res.json();
-  setFavorites(data.favorites); // ✅ important
-};
+    try {
+      const res = await fetch("/api/favorites");
+      const data = await res.json();
+      setFavorites(data.favorites || []);
+    } catch (err) {
+      console.error("Failed to fetch favorites", err);
+      setFavorites([]);
+    } finally {
+      setIsLoading(false); // ✅ THIS FIXES YOUR ISSUE
+    }
+  };
 
   useEffect(() => {
-    setIsLoading(true);
     fetchFavorites();
-  }, [fetchFavorites]);
+  }, []);
 
-  const addFavorite = useCallback(
-    async (activity: string) => {
-      if (!activity?.trim()) return;
+  const addFavorite = async (activity: string) => {
+    await fetch("/api/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ activity }),
+    });
 
-      if (session?.user) {
-        const res = await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ activity: activity.trim() }),
-        });
-        if (res.ok) {
-          setFavorites((prev) =>
-            prev.includes(activity) ? prev : [...prev, activity]
-          );
-        }
-      } else {
-        const stored = localStorage.getItem("favorites");
-        const current = stored ? JSON.parse(stored) : [];
-        if (!current.includes(activity)) {
-          const updated = [...current, activity];
-          localStorage.setItem("favorites", JSON.stringify(updated));
-          setFavorites(updated);
-        }
-      }
-    },
-    [session?.user]
-  );
+    fetchFavorites(); // refresh list
+  };
 
-  const removeFavorite = useCallback(
-    async (activity: string) => {
-      if (session?.user) {
-        const res = await fetch(`/api/favorites?activity=${encodeURIComponent(activity)}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          setFavorites((prev) => prev.filter((f) => f !== activity));
-        }
-      } else {
-        const updated = favorites.filter((f) => f !== activity);
-        localStorage.setItem("favorites", JSON.stringify(updated));
-        setFavorites(updated);
-      }
-    },
-    [session?.user, favorites]
-  );
+  const removeFavorite = async (activity: string) => {
+    await fetch(`/api/favorites?activity=${encodeURIComponent(activity)}`, {
+      method: "DELETE",
+    });
 
-  return { favorites, isLoading, addFavorite, removeFavorite, refetch: fetchFavorites };
+    fetchFavorites(); // refresh list
+  };
+
+  return {
+    favorites,
+    isLoading,
+    addFavorite,
+    removeFavorite,
+  };
 }
