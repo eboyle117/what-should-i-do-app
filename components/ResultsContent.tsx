@@ -34,7 +34,7 @@ export default function ResultsContent() {
         return;
       }
 
-      setResult("Watch a movie🎬");
+      setResult("Watch a movie 🎬");
       setMovies(data);
       setSongs([]);
     } catch {
@@ -53,7 +53,7 @@ export default function ResultsContent() {
         return;
       }
 
-      setResult("Listen to music🎵");
+      setResult("Vibe to music 🎵");
       setSongs(data);
       setMovies([]);
     } catch {
